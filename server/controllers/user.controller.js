@@ -35,7 +35,7 @@ export const userSignUp = async ( username, password ) => {
 		return {
 			error: false,
 			message: 'User created successfully',
-			status: 200,
+			status: 201,
 			token,
 		}
 
