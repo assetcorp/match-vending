@@ -410,7 +410,7 @@ export const createProduct = async ( userId, productId, productName, cost, amoun
 		return {
 			error: false,
 			message: 'Product created successfully',
-			status: 200,
+			status: 201,
 			data: product[1],
 		}
 
