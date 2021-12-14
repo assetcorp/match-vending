@@ -2,6 +2,12 @@
   "name": "match-vending",
   "version": "1.0.0",
   "main": "index.js",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "repository": "https://github.com/assetcorp/match-vending.git",
   "author": "Delali <michaelazumah@live.com>",
   "license": "MIT",
