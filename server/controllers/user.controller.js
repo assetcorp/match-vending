@@ -214,7 +214,7 @@ export const getOneUser = async ( username ) => {
 			error: false,
 			message: '',
 			status: 200,
-			users: user,
+			data: user,
 		}
 
 	} catch ( error ) {
@@ -302,9 +302,13 @@ export const patchUserRole = async ( username, role ) => {
 			throw new Error( 'One or more fields has not been set. Required fields: [username, role]' )
 		}
 
-		const ModelUser = UserModel()
+		// Validate role
+		if ( ['buyer', 'seller'].indexOf( role ) === -1 ) {
+			throw new Error( `Role must be one of ['buyer', 'seller']` )
+		}
 
 		// Update user
+		const ModelUser = UserModel()
 		await ModelUser.update( {
 			role,
 		}, {
