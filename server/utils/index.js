@@ -57,11 +57,18 @@ export const verifyJwt = token => {
 }
 
 export const validateJwt = ( req, res ) => {
-  if ( req.headers['x-authentication-token'] ) {
+  if ( req.headers['authorization'] ) {
     try {
-      let authorization = req.headers['x-authentication-token']
-      req.jwt = verifyJwt( authorization )
-      return true
+			let authorization = req.headers['authorization'].split( ' ' )
+      const tokenType = authorization[0]
+      const tokenString = authorization[1]
+      // const rememberME = authorization[2]
+      if ( tokenType !== 'Bearer' ) {
+        return res.status( 401 ).send( buildErrorResponse( 401, 'You are not authenticated' ) )
+      } else {
+        req.jwt = verifyJwt( tokenString )
+        return true
+      }
     } catch ( err ) {
       let status = 403
       let message = 'You do not have permission to access the requested resource'
