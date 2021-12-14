@@ -1,0 +1,9 @@
+{
+  "name": "match-vending",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/assetcorp/match-vending.git",
+  "author": "Delali <michaelazumah@live.com>",
+  "license": "MIT",
+  "private": false
+}
