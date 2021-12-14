@@ -5,5 +5,19 @@
   "repository": "https://github.com/assetcorp/match-vending.git",
   "author": "Delali <michaelazumah@live.com>",
   "license": "MIT",
-  "private": false
+  "private": false,
+  "dependencies": {
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^10.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "mysql2": "^2.3.3",
+    "next": "^12.0.7",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "sequelize": "^6.12.0-beta.3"
+  },
+  "devDependencies": {
+    "sequelize-cli": "^6.3.0"
+  }
 }
