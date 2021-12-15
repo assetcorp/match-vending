@@ -6,7 +6,9 @@ import { UserSessionModel } from './userSession.model'
 
 export const UserModel = () => {
 
-	const User = Database.connection.define( 'user', UserSchema )
+	const User = Database.connection.define( 'user', UserSchema, {
+		paranoid: true,
+	} )
 
 	User.generateSaltHash = () => {
 		return crypto.randomBytes( 16 ).toString( 'base64' )
