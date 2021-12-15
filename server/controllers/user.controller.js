@@ -40,6 +40,7 @@ export const userSignUp = async ( username, password ) => {
 		}
 
 	} catch ( error ) {
+		console.error( error )
 		return {
 			error: true,
 			message: error.message || 'There was an internal server error',
