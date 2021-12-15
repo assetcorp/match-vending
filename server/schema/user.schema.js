@@ -37,7 +37,7 @@ export default {
 		defaultValue: 0,
 		validate: {
 			isNumeric: true,
-			isIn: [[5, 10, 20, 50, 100]],
+			isIn: [[0, 5, 10, 20, 50, 100]],
 		}
 	},
 	role: {
