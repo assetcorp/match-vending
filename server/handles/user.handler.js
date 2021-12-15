@@ -2,7 +2,7 @@ import {
 	getAllUsers, getOneUser, patchUserDeposit, patchUserDepositReset,
 	patchUserRole, removeUser, restoreUserFromDeleted, userLogin, userSignUp,
 } from '../controllers/user.controller'
-import { buildResponse, genericErrorMessage, validateJwt, validateRequest } from '../utils'
+import { buildErrorResponse, buildResponse, genericErrorMessage, validateJwt, validateRequest } from '../utils'
 
 export const signUpUser = async ( req, res ) => {
 	try {
@@ -21,7 +21,7 @@ export const signUpUser = async ( req, res ) => {
 	} catch ( error ) {
 		return res
 			.status( error.status || 500 )
-			.send( buildResponse( error.message || genericErrorMessage ) )
+			.send( buildErrorResponse( error.message || genericErrorMessage ) )
 	}
 }
 
@@ -41,7 +41,7 @@ export const loginUser = async ( req, res ) => {
 	} catch ( error ) {
 		return res
 			.status( error.status || 500 )
-			.send( buildResponse( error.message || genericErrorMessage ) )
+			.send( buildErrorResponse( error.message || genericErrorMessage ) )
 	}
 }
 
@@ -60,7 +60,7 @@ export const allUsers = async ( req, res ) => {
 	} catch ( error ) {
 		return res
 			.status( error.status || 500 )
-			.send( buildResponse( error.message || genericErrorMessage ) )
+			.send( buildErrorResponse( error.message || genericErrorMessage ) )
 	}
 }
 
@@ -79,7 +79,7 @@ export const singleUser = async ( req, res ) => {
 	} catch ( error ) {
 		return res
 			.status( error.status || 500 )
-			.send( buildResponse( error.message || genericErrorMessage ) )
+			.send( buildErrorResponse( error.message || genericErrorMessage ) )
 	}
 }
 
@@ -111,7 +111,7 @@ export const patchUpUser = async ( req, res ) => {
 	} catch ( error ) {
 		return res
 			.status( error.status || 500 )
-			.send( buildResponse( error.message || genericErrorMessage ) )
+			.send( buildErrorResponse( error.message || genericErrorMessage ) )
 	}
 }
 
@@ -130,7 +130,7 @@ export const deleteUser = async ( req, res ) => {
 	} catch ( error ) {
 		return res
 			.status( error.status || 500 )
-			.send( buildResponse( error.message || genericErrorMessage ) )
+			.send( buildErrorResponse( error.message || genericErrorMessage ) )
 	}
 }
 
@@ -149,6 +149,6 @@ export const restoreUser = async ( req, res ) => {
 	} catch ( error ) {
 		return res
 			.status( error.status || 500 )
-			.send( buildResponse( error.message || genericErrorMessage ) )
+			.send( buildErrorResponse( error.message || genericErrorMessage ) )
 	}
 }
