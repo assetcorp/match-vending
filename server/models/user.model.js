@@ -1,12 +1,12 @@
+import { database } from '../database/db'
 import UserSchema from '../schema/user.schema'
 import crypto from 'crypto'
-import Database from '.'
 import { ProductModel } from './product.model'
 import { UserSessionModel } from './userSession.model'
 
 export const UserModel = () => {
 
-	const User = Database.connection.define( 'user', UserSchema, {
+	const User = database.define( 'user', UserSchema, {
 		paranoid: true,
 	} )
 
@@ -32,14 +32,14 @@ export const UserModel = () => {
 	User.beforeCreate( updateUserPassword )
 	User.beforeUpdate( updateUserPassword )
 
-	User.hasMany( ProductModel, {
+	User.hasMany( ProductModel(), {
 		sourceKey: 'refId',
 		foreignKey: {
 			field: 'sellerId',
 		}
 	} )
 
-	User.hasMany( UserSessionModel, {
+	User.hasMany( UserSessionModel(), {
 		sourceKey: 'username',
 		foreignKey: {
 			field: 'username'

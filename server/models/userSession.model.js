@@ -1,9 +1,9 @@
+import { database } from '../database/db'
 import UserSessionSchema from '../schema/userSession.schema'
-import Database from '.'
 
 export const UserSessionModel = () => {
 
-	const UserSession = Database.connection.define( 'userSession', UserSessionSchema )
+	const UserSession = database.define( 'userSession', UserSessionSchema )
 
 	return UserSession
 }
