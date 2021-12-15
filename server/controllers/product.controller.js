@@ -1,5 +1,5 @@
 import { ProductModel } from '../models/product.model'
-import { Transaction } from 'sequelize'
+import { database } from '../database/db'
 import { UserModel } from '../models/user.model'
 import * as lodash from 'lodash'
 
@@ -11,18 +11,25 @@ import * as lodash from 'lodash'
  */
 const convertAmountIntoArrayParts = ( amount, validCents = [5, 10, 20, 50, 100] ) => {
 	let centArray = []
+	let newCents = [...validCents]
 	if ( validCents.length > 10 ) return centArray
 
-	const indexOfValue = lodash.findIndex( validCents, ( item, index ) => {
-		const nextItem = validCents[index + 1]
-		if ( item === amount || ( item < amount && nextItem > amount ) ) {
-			return true
+	// eslint-disable-next-line no-unused-vars
+	for ( let item of validCents ) {
+		const closest = Math.max.apply( null, newCents.filter( function ( v ) { return v <= amount } ) )
+		const closestIndex = validCents.indexOf( closest )
+		console.log( closest, closestIndex, amount, newCents, centArray )
+		centArray.push( validCents[closestIndex] )
+
+		if ( lodash.sum( centArray ) === amount ) {
+			return centArray
 		}
-		return false
-	} )
-	centArray.push( validCents[indexOfValue] )
-	if ( lodash.sum( centArray ) !== amount ) {
-		convertAmountIntoArrayParts( amount, validCents.splice( indexOfValue, 1 ) )
+
+		const centManipulate = [...newCents]
+		centManipulate.splice( closestIndex, 1 )
+		console.log( centManipulate )
+
+		newCents = [...centManipulate]
 	}
 
 	return centArray
@@ -50,22 +57,19 @@ export const buyProduct = async ( depositAmount, username, productId, totalUnits
 			throw new Error( `Cannot fulfil purchase for this product since the total number in stock for the product is ${productDetails.amountAvailable}.` )
 		}
 		const userUnitDeposit = Number( depositAmount )
-		const totalCostOfPurchase = Number( productDetails.cost )
-			.multiply( totalUnits )
-			.toUnit()
+		const totalCostOfPurchase = Number( productDetails.cost ) * totalUnits
 		if ( totalCostOfPurchase > userUnitDeposit ) {
 			throw new Error( 'You do not have enough balance to purchase this product' )
 		}
-		const totalUserBalanceAfterPurchase = userUnitDeposit.subtract( totalCostOfPurchase )
+		const totalUserBalanceAfterPurchase = userUnitDeposit - totalCostOfPurchase
 
 		let updatedProduct = productDetails
 		updatedProduct.amountAvailable = productStockRemaining
 
 		// Record the purchase. Using a transaction to ensure that everything happens at the same time
-		await Transaction( async t => {
+		await database.transaction( async t => {
 			// Debit the users' account
 			const ModelUser = UserModel()
-			ModelUser.sync()
 			await ModelUser.update( {
 				deposit: 0,
 			}, {
@@ -74,14 +78,12 @@ export const buyProduct = async ( depositAmount, username, productId, totalUnits
 			} )
 
 			// Update the product
-			const productUpdate = await ModelProduct.update( {
+			await ModelProduct.update( {
 				amountAvailable: productStockRemaining
 			}, {
 				where: { productId },
 				transaction: t,
-				returning: true,
 			} )
-			updatedProduct = productUpdate[1]
 		} )
 
 		return {
@@ -92,7 +94,7 @@ export const buyProduct = async ( depositAmount, username, productId, totalUnits
 				totalCostOfPurchase,
 				purchasedProduct: updatedProduct,
 				change: !totalUserBalanceAfterPurchase ? [0] :
-					convertAmountIntoArrayParts( totalUserBalanceAfterPurchase )
+					convertAmountIntoArrayParts( totalUserBalanceAfterPurchase, [5, 10, 20, 50, 100] )
 			}
 		}
 
@@ -143,7 +145,7 @@ export const getOneProduct = async ( productId ) => {
 		// Find one product
 		const ModelProduct = ProductModel()
 		ModelProduct.sync()
-		const product = await ModelProduct.findAll( {
+		const product = await ModelProduct.findOne( {
 			where: { productId, deletedAt: null }
 		} )
 		if ( !product ) {
@@ -182,7 +184,7 @@ export const updateOneProduct = async ( userId, productId, productName, cost, am
 		// Update product
 		const ModelProduct = ProductModel()
 		ModelProduct.sync()
-		const product = await ModelProduct.update( {
+		const productUpdate = await ModelProduct.update( {
 			productName,
 			cost,
 			amountAvailable,
@@ -191,15 +193,19 @@ export const updateOneProduct = async ( userId, productId, productName, cost, am
 			returning: true,
 		} )
 
-		if ( !product[0] ) {
+		if ( !productUpdate[0] ) {
 			throw new Error( 'The product was not updated. The productId may not exist or the product does not belong to you.' )
 		}
+
+		const product = await ModelProduct.findOne( {
+			where: { productId, deletedAt: null }
+		} )
 
 		return {
 			error: false,
 			message: 'The product has been updated successfully',
 			status: 200,
-			data: product[1],
+			data: product || null,
 		}
 
 	} catch ( error ) {
@@ -218,26 +224,24 @@ export const updateProductName = async ( userId, productId, productName ) => {
 		if ( !userId || !productId || !productName ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, productName]' )
 		}
-
 		// Update product
 		const ModelProduct = ProductModel()
 		ModelProduct.sync()
-		const product = await ModelProduct.update( {
+		await ModelProduct.update( {
 			productName,
 		}, {
-			where: { productId, sellerId: userId },
-			returning: true,
+			where: { productId, sellerId: userId, deletedAt: null },
 		} )
 
-		if ( !product[0] ) {
-			throw new Error( 'The product was not updated. The productId may not exist or the product does not belong to you.' )
-		}
+		const product = await ModelProduct.findOne( {
+			where: { productId, deletedAt: null }
+		} )
 
 		return {
 			error: false,
 			message: 'Product name updated',
 			status: 200,
-			data: product[1],
+			data: product || null,
 		}
 
 	} catch ( error ) {
@@ -258,29 +262,28 @@ export const updateProductCost = async ( userId, productId, cost ) => {
 		}
 
 		// Ensure the cost amount is valid
-		if ( [5, 10, 20, 50, 100].indexOf( cost ) === -1 ) {
-			throw new Error( 'The cost amount has to be one of 5, 10, 20, 50, or 100 cent coins' )
+		if ( cost % 5 !== 0 ) {
+			throw new Error( 'The cost amount has to be a multiple of 5' )
 		}
 
 		// Update product
 		const ModelProduct = ProductModel()
 		ModelProduct.sync()
-		const product = await ModelProduct.update( {
+		await ModelProduct.update( {
 			cost,
 		}, {
 			where: { productId, sellerId: userId, },
-			returning: true,
 		} )
 
-		if ( !product[0] ) {
-			throw new Error( 'The product was not updated. The productId may not exist or the product does not belong to you.' )
-		}
+		const product = await ModelProduct.findOne( {
+			where: { productId, deletedAt: null }
+		} )
 
 		return {
 			error: false,
 			message: 'Product cost updated',
 			status: 200,
-			data: product[1],
+			data: product || null,
 		}
 
 	} catch ( error ) {
@@ -303,22 +306,21 @@ export const updateProductStock = async ( userId, productId, amountAvailable ) =
 		// Update product
 		const ModelProduct = ProductModel()
 		ModelProduct.sync()
-		const product = await ModelProduct.update( {
+		await ModelProduct.update( {
 			amountAvailable,
 		}, {
 			where: { productId },
-			returning: true,
 		} )
 
-		if ( !product[0] ) {
-			throw new Error( 'The product was not updated. The productId may not exist or the product does not belong to you.' )
-		}
+		const product = await ModelProduct.findOne( {
+			where: { productId, deletedAt: null }
+		} )
 
 		return {
 			error: false,
 			message: 'Product stock updated',
 			status: 200,
-			data: product[1],
+			data: product || null,
 		}
 
 	} catch ( error ) {
@@ -341,22 +343,21 @@ export const transferProductOwnership = async ( userId, productId, newSellerId )
 		// Update product
 		const ModelProduct = ProductModel()
 		ModelProduct.sync()
-		const product = await ModelProduct.update( {
+		await ModelProduct.update( {
 			sellerId: newSellerId,
 		}, {
 			where: { productId, sellerId: userId },
-			returning: true,
 		} )
 
-		if ( !product[0] ) {
-			throw new Error( 'The product was not transferred. The productId may not exist or the product does not belong to you.' )
-		}
+		const product = await ModelProduct.findOne( {
+			where: { productId, deletedAt: null }
+		} )
 
 		return {
 			error: false,
 			message: `The product now belongs to user with ID '${newSellerId}'`,
 			status: 200,
-			data: product[1],
+			data: product || null,
 		}
 
 	} catch ( error ) {

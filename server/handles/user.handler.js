@@ -120,15 +120,23 @@ export const depositAmount = async ( req, res ) => {
 		const requiredBody = ['amount']
 		if ( await validateJwt( req, res ) &&
 			validateRequest( req, res, requiredBody, 'body' ) ) {
-			const username = req.jwt.username
 			const { amount } = req.body
+			const username = req.jwt.username
+			const userIsBuyer = req.userDetails.role === 'buyer'
+
+			if ( !userIsBuyer ) {
+				throw {
+					status: 401,
+					message: `Only users with the 'buyer' role can purchase a product`,
+				}
+			}
 
 			const user = await patchUserDeposit( username, amount )
-			if ( user.error ) throw new Error( user )
+			if ( user.error ) throw user
 
 			return res
 				.status( user.status )
-				.send( buildResponse( user.message ) )
+				.send( buildResponse( user.message, user.data ) )
 		}
 	} catch ( error ) {
 		return res
@@ -143,7 +151,7 @@ export const resetDepositAmount = async ( req, res ) => {
 			const username = req.jwt.username
 
 			const user = await patchUserDepositReset( username )
-			if ( user.error ) throw new Error( user )
+			if ( user.error ) throw user
 
 			return res
 				.status( user.status )

@@ -198,21 +198,21 @@ export const patchUserDeposit = async ( username, amount ) => {
 		const newAmount = Number( amount )
 
 		// Update user
-		const user = await ModelUser.update( {
-			deposit: newAmount.toUnit(),
+		await ModelUser.update( {
+			deposit: newAmount,
 		}, {
-			where: { username, role: 'buyer' },
-			returning: true,
+			where: { username, role: 'buyer', deletedAt: null },
 		} )
 
-		if ( !user[0] ) {
-			throw new Error( `The deposit failed. User MUST have the 'buyer' role.` )
-		}
+		const user = await ModelUser.findOne( {
+			where: { username, role: 'buyer', deletedAt: null }
+		} )
 
 		return {
 			error: false,
 			message: 'User deposited funds successfully',
 			status: 200,
+			data: user || null
 		}
 
 	} catch ( error ) {
@@ -235,16 +235,11 @@ export const patchUserDepositReset = async ( username ) => {
 		const ModelUser = UserModel()
 		ModelUser.sync()
 		// Update user
-		const user = await ModelUser.update( {
+		await ModelUser.update( {
 			deposit: 0,
 		}, {
 			where: { username, role: 'buyer' },
-			returning: true,
 		} )
-
-		if ( !user[0] ) {
-			throw new Error( `The deposit reset failed. User MUST have the 'buyer' role.` )
-		}
 
 		return {
 			error: false,

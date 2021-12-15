@@ -9,13 +9,13 @@ import { buildErrorResponse, buildResponse, genericErrorMessage, validateJwt, va
 
 export const newProduct = async ( req, res ) => {
 	try {
-		const requiredBody = [ 'productName', 'cost', 'amountAvailable']
+		const requiredBody = ['productName', 'cost', 'amountAvailable']
 		if ( await validateJwt( req, res ) &&
 			validateRequest( req, res, requiredBody, 'body' ) ) {
-			const {  productName, cost, amountAvailable } = req.body
+			const { productName, cost, amountAvailable } = req.body
 			const userId = req.jwt.userId
 			const userIsSeller = req.userDetails.role === 'seller'
-			console.log(req.userDetails)
+			console.log( req.userDetails )
 
 			if ( !userIsSeller ) {
 				throw {
@@ -93,19 +93,19 @@ export const patchUpProduct = async ( req, res ) => {
 
 			if ( 'productName' in req.body ) {
 				const newProduct = await updateProductName( userId, productId, req.body.productName )
-				if ( newProduct.error ) throw new Error( newProduct )
+				if ( newProduct.error ) throw newProduct
 			}
 			if ( 'cost' in req.body ) {
 				const newProduct = await updateProductCost( userId, productId, req.body.cost )
-				if ( newProduct.error ) throw new Error( newProduct )
+				if ( newProduct.error ) throw newProduct
 			}
 			if ( 'amountAvailable' in req.body ) {
 				const newProduct = await updateProductStock( userId, productId, req.body.amountAvailable )
-				if ( newProduct.error ) throw new Error( newProduct )
+				if ( newProduct.error ) throw newProduct
 			}
 			if ( 'transferOwner' in req.body ) {
 				const newProduct = await transferProductOwnership( userId, productId, req.body.transferOwner )
-				if ( newProduct.error ) throw new Error( newProduct )
+				if ( newProduct.error ) throw newProduct
 			}
 
 			const product = await getOneProduct( productId )
@@ -131,7 +131,7 @@ export const deleteProduct = async ( req, res ) => {
 			const userId = req.jwt.userId
 
 			const product = await removeProduct( userId, productId )
-			if ( product.error ) throw new Error( product )
+			if ( product.error ) throw product
 
 			return res
 				.status( product.status )
@@ -160,6 +160,7 @@ export const restoreProduct = async ( req, res ) => {
 				.send( buildResponse( product.message ) )
 		}
 	} catch ( error ) {
+		console.error( error )
 		return res
 			.status( error.status || 500 )
 			.send( buildErrorResponse( error.message || genericErrorMessage ) )

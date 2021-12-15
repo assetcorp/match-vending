@@ -59,6 +59,7 @@ export const verifyJwt = token => {
 }
 
 export const validateJwt = async ( req, res ) => {
+	console.log(req.headers)
 	if ( req.headers['authorization'] ) {
 		try {
 			let authorization = req.headers['authorization'].split( ' ' )
