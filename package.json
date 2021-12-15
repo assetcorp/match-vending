@@ -1,34 +1,36 @@
 {
-  "name": "match-vending",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
-  },
-  "repository": "https://github.com/assetcorp/match-vending.git",
-  "author": "Delali <michaelazumah@live.com>",
-  "license": "MIT",
-  "private": false,
-  "dependencies": {
-    "cors": "^2.8.5",
-    "crypto": "^1.0.1",
-    "dinero.js": "^1.9.1",
-    "dotenv": "^10.0.0",
-    "jsonwebtoken": "^8.5.1",
-    "lodash": "^4.17.21",
-    "mysql2": "^2.3.3",
-    "next": "^12.0.7",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "sequelize": "^6.12.0-beta.3",
-    "uuid": "^8.3.2"
-  },
-  "devDependencies": {
-    "eslint": "^8.4.1",
-    "eslint-plugin-react": "^7.27.1",
-    "sequelize-cli": "^6.3.0"
-  }
+	"name": "match-vending",
+	"version": "1.0.0",
+	"main": "index.js",
+	"scripts": {
+		"dev": "next dev",
+		"build": "next build",
+		"start": "next start",
+		"lint": "next lint",
+		"migrate": "./node_modules/.bin/sequelize db:migrate",
+		"migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo"
+	},
+	"repository": "https://github.com/assetcorp/match-vending.git",
+	"author": "Delali <michaelazumah@live.com>",
+	"license": "MIT",
+	"private": false,
+	"dependencies": {
+		"cors": "^2.8.5",
+		"crypto": "^1.0.1",
+		"dinero.js": "^1.9.1",
+		"dotenv": "^10.0.0",
+		"jsonwebtoken": "^8.5.1",
+		"lodash": "^4.17.21",
+		"mysql2": "^2.3.3",
+		"next": "^12.0.7",
+		"react": "^17.0.2",
+		"react-dom": "^17.0.2",
+		"sequelize": "^6.12.0-beta.3",
+		"uuid": "^8.3.2"
+	},
+	"devDependencies": {
+		"eslint": "^8.4.1",
+		"eslint-plugin-react": "^7.27.1",
+		"sequelize-cli": "^6.3.0"
+	}
 }
