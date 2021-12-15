@@ -1,5 +1,9 @@
+const path = require( 'path' )
 const dotenv = require( 'dotenv' )
-dotenv.config()
+const NODE_ENV_TEST = process.env.NODE_ENV === 'test'
+dotenv.config( {
+	path: path.resolve( __dirname, '../../', NODE_ENV_TEST ? '.env.test.local' : '.env' )
+} )
 
 const envProcess = process.env
 

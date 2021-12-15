@@ -9,7 +9,9 @@
 		"lint": "next lint",
 		"migrate": "./node_modules/.bin/sequelize db:migrate",
 		"migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo",
-		"test": "jest"
+		"app-migrate:reset": "cross-env NODE_ENV=test ./node_modules/.bin/sequelize db:drop && cross-env NODE_ENV=test  ./node_modules/.bin/sequelize db:create",
+		"test": "cross-env NODE_ENV=test jest --testTimeout=10000",
+		"pretest": "cross-env NODE_ENV=test yarn app-migrate:reset"
 	},
 	"jest": {
 		"testEnvironment": "node",
@@ -37,6 +39,7 @@
 	},
 	"devDependencies": {
 		"babel-register": "^6.26.0",
+		"cross-env": "^7.0.3",
 		"eslint": "^8.4.1",
 		"eslint-plugin-react": "^7.27.1",
 		"jest": "^27.4.5",
