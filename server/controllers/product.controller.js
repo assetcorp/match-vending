@@ -340,6 +340,10 @@ export const transferProductOwnership = async ( userId, productId, newSellerId )
 			returning: true,
 		} )
 
+		if ( !product[0] ) {
+			throw new Error( 'The product was not transferred. The productId may not exist or the product does not belong to you.' )
+		}
+
 		return {
 			error: false,
 			message: `The product now belongs to user with ID '${newSellerId}'`,
@@ -356,22 +360,60 @@ export const transferProductOwnership = async ( userId, productId, newSellerId )
 	}
 }
 
-export const removeProduct = async ( productId ) => {
+// NOTE: Only the owner of the product should be able to remove product
+export const removeProduct = async ( userId, productId ) => {
 	try {
 		// All fields are required.
-		if ( !productId ) {
-			throw new Error( 'One or more fields has not been set. Required fields: [productId]' )
+		if ( !userId || !productId ) {
+			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId]' )
 		}
 
 		// Remove product
 		const ModelProduct = ProductModel()
-		await ModelProduct.destroy( {
-			where: { productId },
+		const deleted = await ModelProduct.destroy( {
+			where: { productId, sellerId: userId },
 		} )
+
+		if ( !deleted ) {
+			throw new Error( 'The product was not removed. The productId may not exist or the product does not belong to you.' )
+		}
 
 		return {
 			error: false,
 			message: 'Product removed successfully',
+			status: 200,
+		}
+
+	} catch ( error ) {
+		return {
+			error: true,
+			message: error.message || 'There was an internal server error',
+			status: 500
+		}
+	}
+}
+
+// NOTE: Only the owner of the product should be able to restore product
+export const restoreProduct = async ( userId, productId ) => {
+	try {
+		// All fields are required.
+		if ( !userId || !productId ) {
+			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId]' )
+		}
+
+		// Remove product
+		const ModelProduct = ProductModel()
+		const restored = await ModelProduct.restore( {
+			where: { productId, sellerId: userId },
+		} )
+
+		if ( !restored ) {
+			throw new Error( 'The product was not restored. The productId may not exist or the product does not belong to you.' )
+		}
+
+		return {
+			error: false,
+			message: 'Product restored successfully',
 			status: 200,
 		}
 
