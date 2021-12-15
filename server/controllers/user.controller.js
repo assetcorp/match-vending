@@ -329,3 +329,57 @@ export const patchUserRole = async ( username, role ) => {
 		}
 	}
 }
+
+export const removeUser = async ( username ) => {
+	try {
+		// All fields are required
+		if ( !username ) {
+			throw new Error( 'One or more fields has not been set. Required fields: [username]' )
+		}
+		// Update user
+		const ModelUser = UserModel()
+		await ModelUser.destroy( {
+			where: { username }
+		} )
+
+		return {
+			error: false,
+			message: 'User deleted successfully',
+			status: 200,
+		}
+
+	} catch ( error ) {
+		return {
+			error: true,
+			message: error.message || 'There was an internal server error',
+			status: 500
+		}
+	}
+}
+
+export const restoreUserFromDeleted = async ( username ) => {
+	try {
+		// All fields are required
+		if ( !username ) {
+			throw new Error( 'One or more fields has not been set. Required fields: [username]' )
+		}
+		// Update user
+		const ModelUser = UserModel()
+		await ModelUser.restore( {
+			where: { username }
+		} )
+
+		return {
+			error: false,
+			message: 'User restored successfully',
+			status: 200,
+		}
+
+	} catch ( error ) {
+		return {
+			error: true,
+			message: error.message || 'There was an internal server error',
+			status: 500
+		}
+	}
+}
