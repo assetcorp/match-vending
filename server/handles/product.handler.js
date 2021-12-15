@@ -1,4 +1,5 @@
 import {
+	buyProduct,
 	createProduct, getAllProducts, getOneProduct, removeProduct,
 	transferProductOwnership, updateProductCost, updateProductName,
 	updateProductStock
@@ -9,9 +10,18 @@ import { buildErrorResponse, buildResponse, genericErrorMessage, validateJwt, va
 export const newProduct = async ( req, res ) => {
 	try {
 		const requiredBody = ['productId', 'productName', 'cost', 'amountAvailable']
-		if ( validateRequest( req, res, requiredBody, 'body' ) ) {
+		if ( await validateJwt( req, res ) &&
+			validateRequest( req, res, requiredBody, 'body' ) ) {
 			const { productId, productName, cost, amountAvailable } = req.body
 			const userId = req.jwt.userId
+			const userIsSeller = req.userDetails.role === 'seller'
+
+			if ( !userIsSeller ) {
+				throw {
+					status: 401,
+					message: `Only users with the 'seller' role can create a product`,
+				}
+			}
 
 			const newProduct = await createProduct(
 				userId,
@@ -35,7 +45,7 @@ export const newProduct = async ( req, res ) => {
 
 export const allProducts = async ( req, res ) => {
 	try {
-		if ( validateJwt( req, res ) ) {
+		if ( await validateJwt( req, res ) ) {
 			const { limit, offset } = req.query
 
 			const products = await getAllProducts( limit, offset )
@@ -55,7 +65,7 @@ export const allProducts = async ( req, res ) => {
 export const singleProduct = async ( req, res ) => {
 	try {
 		const requiredBody = ['productId']
-		if ( validateJwt( req, res ) &&
+		if ( await validateJwt( req, res ) &&
 			validateRequest( req, res, requiredBody, 'body' ) ) {
 			const { productId } = req.body
 
@@ -76,7 +86,7 @@ export const singleProduct = async ( req, res ) => {
 export const patchUpProduct = async ( req, res ) => {
 	try {
 		const requiredBody = ['productId']
-		if ( validateJwt( req, res ) &&
+		if ( await validateJwt( req, res ) &&
 			validateRequest( req, res, requiredBody, 'body' ) ) {
 			const { productId } = req.body
 			const userId = req.jwt.userId
@@ -115,7 +125,7 @@ export const patchUpProduct = async ( req, res ) => {
 export const deleteProduct = async ( req, res ) => {
 	try {
 		const requiredBody = ['productId']
-		if ( validateJwt( req, res ) &&
+		if ( await validateJwt( req, res ) &&
 			validateRequest( req, res, requiredBody, 'body' ) ) {
 			const { productId } = req.body
 			const userId = req.jwt.userId
@@ -137,7 +147,7 @@ export const deleteProduct = async ( req, res ) => {
 export const restoreProduct = async ( req, res ) => {
 	try {
 		const requiredBody = ['productId']
-		if ( validateJwt( req, res ) &&
+		if ( await validateJwt( req, res ) &&
 			validateRequest( req, res, requiredBody, 'body' ) ) {
 			const { productId } = req.body
 			const userId = req.jwt.userId
@@ -148,6 +158,37 @@ export const restoreProduct = async ( req, res ) => {
 			return res
 				.status( product.status )
 				.send( buildResponse( product.message ) )
+		}
+	} catch ( error ) {
+		return res
+			.status( error.status || 500 )
+			.send( buildErrorResponse( error.message || genericErrorMessage ) )
+	}
+}
+
+export const buySingleProduct = async ( req, res ) => {
+	try {
+		const requiredBody = ['productId', 'units']
+		if ( await validateJwt( req, res ) &&
+			validateRequest( req, res, requiredBody, 'body' ) ) {
+			const { productId, units } = req.body
+			const username = req.jwt.username
+			const depositAmount = req.userDetails.deposit || 0
+			const userIsBuyer = req.userDetails.role === 'buyer'
+
+			if ( !userIsBuyer ) {
+				throw {
+					status: 401,
+					message: `Only users with the 'buyer' role can purchase a product`,
+				}
+			}
+
+			const newProduct = await buyProduct( depositAmount, username, productId, units )
+			if ( newProduct.error ) throw newProduct
+
+			return res
+				.status( newProduct.status )
+				.send( buildResponse( newProduct.message, newProduct.data ) )
 		}
 	} catch ( error ) {
 		return res

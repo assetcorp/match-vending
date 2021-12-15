@@ -47,7 +47,7 @@ export const loginUser = async ( req, res ) => {
 
 export const allUsers = async ( req, res ) => {
 	try {
-		if ( validateJwt( req, res ) ) {
+		if ( await validateJwt( req, res ) ) {
 			const { limit, offset } = req.query
 
 			const allUsers = await getAllUsers( limit, offset )
@@ -66,7 +66,7 @@ export const allUsers = async ( req, res ) => {
 
 export const singleUser = async ( req, res ) => {
 	try {
-		if ( validateJwt( req, res ) ) {
+		if ( await validateJwt( req, res ) ) {
 			const username = req.jwt.username
 
 			const user = await getOneUser( username )
@@ -85,7 +85,7 @@ export const singleUser = async ( req, res ) => {
 
 export const patchUpUser = async ( req, res ) => {
 	try {
-		if ( validateJwt( req, res ) ) {
+		if ( await validateJwt( req, res ) ) {
 			const username = req.jwt.username
 
 			if ( 'deposit' in req.body ) {
@@ -115,9 +115,50 @@ export const patchUpUser = async ( req, res ) => {
 	}
 }
 
+export const depositAmount = async ( req, res ) => {
+	try {
+		const requiredBody = ['amount']
+		if ( await validateJwt( req, res ) &&
+			validateRequest( req, res, requiredBody, 'body' ) ) {
+			const username = req.jwt.username
+			const { amount } = req.body
+
+			const user = await patchUserDeposit( username, amount )
+			if ( user.error ) throw new Error( user )
+
+			return res
+				.status( user.status )
+				.send( buildResponse( user.message ) )
+		}
+	} catch ( error ) {
+		return res
+			.status( error.status || 500 )
+			.send( buildErrorResponse( error.message || genericErrorMessage ) )
+	}
+}
+
+export const resetDepositAmount = async ( req, res ) => {
+	try {
+		if ( await validateJwt( req, res ) ) {
+			const username = req.jwt.username
+
+			const user = await patchUserDepositReset( username )
+			if ( user.error ) throw new Error( user )
+
+			return res
+				.status( user.status )
+				.send( buildResponse( user.message ) )
+		}
+	} catch ( error ) {
+		return res
+			.status( error.status || 500 )
+			.send( buildErrorResponse( error.message || genericErrorMessage ) )
+	}
+}
+
 export const deleteUser = async ( req, res ) => {
 	try {
-		if ( validateJwt( req, res ) ) {
+		if ( await validateJwt( req, res ) ) {
 			const username = req.jwt.username
 
 			const user = await removeUser( username )
@@ -136,7 +177,7 @@ export const deleteUser = async ( req, res ) => {
 
 export const restoreUser = async ( req, res ) => {
 	try {
-		if ( validateJwt( req, res ) ) {
+		if ( await validateJwt( req, res ) ) {
 			const username = req.jwt.username
 
 			const user = await restoreUserFromDeleted( username )

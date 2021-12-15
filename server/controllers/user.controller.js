@@ -104,71 +104,6 @@ export const userLogin = async ( username, password ) => {
 	}
 }
 
-export const userLogout = async ( username, token ) => {
-	try {
-		// All fields are required
-		if ( !username || !token ) {
-			throw new Error( 'One or more fields has not been set. Required fields: [username, token]' )
-		}
-
-		const ModelSessionUser = UserSessionModel()
-
-		const sessionsDeleted = await ModelSessionUser.destroy( {
-			where: { sessionToken: token },
-			force: true,
-		} )
-		if ( !sessionsDeleted ) {
-			throw new Error( 'You do not seem to be logged in. Please log in.' )
-		}
-
-		return {
-			error: false,
-			message: 'User successfully logged out',
-			status: 200,
-			token,
-		}
-
-	} catch ( error ) {
-		return {
-			error: true,
-			message: error.message || 'There was an internal server error',
-			status: 500
-		}
-	}
-}
-
-export const userLogoutAll = async ( username ) => {
-	try {
-		// All fields are required
-		if ( !username ) {
-			throw new Error( 'One or more fields has not been set. Required fields: [username]' )
-		}
-
-		const ModelSessionUser = UserSessionModel()
-
-		const sessionsDeleted = await ModelSessionUser.destroy( {
-			where: { username },
-			force: true,
-		} )
-		if ( !sessionsDeleted ) {
-			throw new Error( 'You do not seem to be logged in. Please log in.' )
-		}
-
-		return {
-			error: false,
-			message: 'User successfully logged out',
-			status: 200,
-		}
-
-	} catch ( error ) {
-		return {
-			error: true,
-			message: error.message || 'There was an internal server error',
-			status: 500
-		}
-	}
-}
-
 export const getAllUsers = async ( limit = 10, offset = 0 ) => {
 	try {
 		const ModelUser = UserModel()
@@ -226,6 +161,7 @@ export const getOneUser = async ( username ) => {
 	}
 }
 
+// Only a user with 'buyer' role can deposit funds
 export const patchUserDeposit = async ( username, amount ) => {
 	try {
 		// All fields are required
@@ -244,11 +180,16 @@ export const patchUserDeposit = async ( username, amount ) => {
 		const newAmount = Money( { amount } )
 
 		// Update user
-		await ModelUser.update( {
+		const user = await ModelUser.update( {
 			deposit: newAmount.toUnit(),
 		}, {
-			where: { username }
+			where: { username, role: 'buyer' },
+			returning: true,
 		} )
+
+		if ( !user[0] ) {
+			throw new Error( `The deposit failed. User MUST have the 'buyer' role.` )
+		}
 
 		return {
 			error: false,
@@ -265,6 +206,7 @@ export const patchUserDeposit = async ( username, amount ) => {
 	}
 }
 
+// Only a user with 'buyer' role can reset deposited funds
 export const patchUserDepositReset = async ( username ) => {
 	try {
 		// All fields are required
@@ -274,15 +216,20 @@ export const patchUserDepositReset = async ( username ) => {
 
 		const ModelUser = UserModel()
 		// Update user
-		await ModelUser.update( {
+		const user = await ModelUser.update( {
 			deposit: 0,
 		}, {
-			where: { username }
+			where: { username, role: 'buyer' },
+			returning: true,
 		} )
+
+		if ( !user[0] ) {
+			throw new Error( `The deposit reset failed. User MUST have the 'buyer' role.` )
+		}
 
 		return {
 			error: false,
-			message: 'User deposited funds successfully',
+			message: 'User reset funds successfully',
 			status: 200,
 		}
 
