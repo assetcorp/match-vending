@@ -1,6 +1,5 @@
 import { UserModel } from '../models/user.model'
 import { signJwt } from '../utils'
-import * as Money from 'dinero.js'
 import { UserSessionModel } from '../models/userSession.model'
 import { v4 as uuidV4 } from 'uuid'
 
@@ -156,9 +155,12 @@ export const getOneUser = async ( username ) => {
 		ModelUser.sync()
 
 		// Find one user
-		const user = await ModelUser.findAll( {
+		const user = await ModelUser.findOne( {
+			attributes: ['username', 'deposit', 'refId', 'role'],
 			where: { username, deletedAt: null },
 		} )
+
+		if ( !user ) throw new Error( 'User not found' )
 
 		return {
 			error: false,
@@ -193,7 +195,7 @@ export const patchUserDeposit = async ( username, amount ) => {
 		ModelUser.sync()
 
 		// Just using this wrapper method incase we want to accept money greater than 100 cents and perhaps different currencies
-		const newAmount = Money( { amount } )
+		const newAmount = Number( amount )
 
 		// Update user
 		const user = await ModelUser.update( {

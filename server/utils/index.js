@@ -83,7 +83,7 @@ export const validateJwt = async ( req, res ) => {
 					return res.status( 401 ).send( buildErrorResponse( 'User does not exist.' ) )
 				}
 
-				req.userDetails = userDetails
+				req.userDetails = userDetails.data
 
 				return true
 			}

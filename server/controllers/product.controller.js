@@ -1,5 +1,4 @@
 import { ProductModel } from '../models/product.model'
-import * as Money from 'dinero.js'
 import { Transaction } from 'sequelize'
 import { UserModel } from '../models/user.model'
 import * as lodash from 'lodash'
@@ -50,11 +49,11 @@ export const buyProduct = async ( depositAmount, username, productId, totalUnits
 		if ( productStockRemaining < 0 ) {
 			throw new Error( `Cannot fulfil purchase for this product since the total number in stock for the product is ${productDetails.amountAvailable}.` )
 		}
-		const userUnitDeposit = Money( { amount: depositAmount } )
-		const totalCostOfPurchase = Money( { amount: productDetails.cost } )
+		const userUnitDeposit = Number( depositAmount )
+		const totalCostOfPurchase = Number( productDetails.cost )
 			.multiply( totalUnits )
 			.toUnit()
-		if ( Money( { amount: totalCostOfPurchase } ).greaterThan( userUnitDeposit ) ) {
+		if ( totalCostOfPurchase > userUnitDeposit ) {
 			throw new Error( 'You do not have enough balance to purchase this product' )
 		}
 		const totalUserBalanceAfterPurchase = userUnitDeposit.subtract( totalCostOfPurchase )
@@ -185,7 +184,7 @@ export const updateOneProduct = async ( userId, productId, productName, cost, am
 		ModelProduct.sync()
 		const product = await ModelProduct.update( {
 			productName,
-			cost: Money( { amount: cost } ).toUnit(), // We need this for future finances
+			cost,
 			amountAvailable,
 		}, {
 			where: { productId, sellerId: userId },
@@ -267,7 +266,7 @@ export const updateProductCost = async ( userId, productId, cost ) => {
 		const ModelProduct = ProductModel()
 		ModelProduct.sync()
 		const product = await ModelProduct.update( {
-			cost: Money( { amount: cost } ).toUnit(), // We need this for future finances
+			cost,
 		}, {
 			where: { productId, sellerId: userId, },
 			returning: true,
@@ -437,13 +436,13 @@ export const restoreProduct = async ( userId, productId ) => {
 	}
 }
 
-export const createProduct = async ( userId, productId, productName, cost, amountAvailable ) => {
+export const createProduct = async ( userId, productName, cost, amountAvailable ) => {
 	try {
 		// All fields are required.
-		if ( !userId, !productId || !productName || !cost || !amountAvailable ) {
-			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, productName, cost, amountAvailable]' )
+		if ( !userId || !productName || !cost || !amountAvailable ) {
+			throw new Error( 'One or more fields has not been set. Required fields: [userId, productName, cost, amountAvailable]' )
 		}
-
+		console.log( cost )
 		// Ensure the cost amount is valid
 		if ( [5, 10, 20, 50, 100].indexOf( cost ) === -1 ) {
 			throw new Error( 'The cost amount has to be one of 5, 10, 20, 50, or 100 cent coins' )
@@ -466,7 +465,7 @@ export const createProduct = async ( userId, productId, productName, cost, amoun
 		const product = await ModelProduct.create( {
 			sellerId: userId,
 			productName,
-			cost: Money( { amount: cost } ).toUnit(), // We need this for future finances
+			cost,
 			amountAvailable,
 		}, {
 			returning: true,

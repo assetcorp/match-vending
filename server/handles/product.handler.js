@@ -9,12 +9,13 @@ import { buildErrorResponse, buildResponse, genericErrorMessage, validateJwt, va
 
 export const newProduct = async ( req, res ) => {
 	try {
-		const requiredBody = ['productId', 'productName', 'cost', 'amountAvailable']
+		const requiredBody = [ 'productName', 'cost', 'amountAvailable']
 		if ( await validateJwt( req, res ) &&
 			validateRequest( req, res, requiredBody, 'body' ) ) {
-			const { productId, productName, cost, amountAvailable } = req.body
+			const {  productName, cost, amountAvailable } = req.body
 			const userId = req.jwt.userId
 			const userIsSeller = req.userDetails.role === 'seller'
+			console.log(req.userDetails)
 
 			if ( !userIsSeller ) {
 				throw {
@@ -25,7 +26,6 @@ export const newProduct = async ( req, res ) => {
 
 			const newProduct = await createProduct(
 				userId,
-				productId,
 				productName,
 				cost,
 				amountAvailable

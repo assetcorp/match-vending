@@ -20,7 +20,6 @@ export default {
 		allowNull: false,
 		validate: {
 			isNumeric: true,
-			isIn: [[5, 10, 20, 50, 100]],
 		}
 	},
 	amountAvailable: {

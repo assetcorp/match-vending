@@ -1,5 +1,4 @@
-import { createProduct, getOneProduct, restoreProduct } from '../../../server/controllers/product.controller'
-import { deleteProduct, patchUpProduct } from '../../../server/handles/product.handler'
+import { deleteProduct, newProduct, patchUpProduct, restoreProduct, singleProduct } from '../../../server/handles/product.handler'
 import { runCors, setDefaultResponse } from '../../../server/utils'
 
 export default async ( req, res ) => {
@@ -8,9 +7,9 @@ export default async ( req, res ) => {
 
 	switch ( method ) {
 		case 'POST':
-			return createProduct( req, res )
+			return newProduct( req, res )
 		case 'GET':
-			return getOneProduct( req, res )
+			return singleProduct( req, res )
 		case 'PATCH':
 			return patchUpProduct( req, res )
 		case 'PUT':
