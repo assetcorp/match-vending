@@ -40,11 +40,11 @@ export const validateRequest = ( req, res, fields = [], reqType = 'body', errorC
 		}
 
 		if ( !pass )
-			return res.status( errorCode ).send( buildErrorResponse( errorCode, message ) )
+			return res.status( errorCode ).send( buildErrorResponse( message ) )
 
 		return true
 	} catch ( error ) {
-		return res.status( 500 ).send( buildErrorResponse( 500 ) )
+		return res.status( 500 ).send( buildErrorResponse( genericErrorMessage ) )
 	}
 }
 
