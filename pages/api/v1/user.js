@@ -1,4 +1,4 @@
-import { patchUpUser, restoreUser, signUpUser, singleUser } from '../../../server/handles/user.handler'
+import { deleteUser, patchUpUser, restoreUser, signUpUser, singleUser } from '../../../server/handles/user.handler'
 import { runCors, setDefaultResponse } from '../../../server/utils'
 
 export default async ( req, res ) => {
@@ -14,6 +14,8 @@ export default async ( req, res ) => {
 			return patchUpUser( req, res )
 		case 'PUT':
 			return restoreUser( req, res )
+		case 'DELETE':
+			return deleteUser( req, res )
 		default:
 			return setDefaultResponse( res )
 	}
