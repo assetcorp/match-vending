@@ -1,5 +1,5 @@
-import { logoutUserSession } from '../../../server/handles/userSession.handler'
-import { runCors, setDefaultResponse } from '../../../server/utils'
+import { logoutUserSession } from '../../../../server/handles/userSession.handler'
+import { runCors, setDefaultResponse } from '../../../../server/utils'
 
 export default async ( req, res ) => {
 	const method = req.method
