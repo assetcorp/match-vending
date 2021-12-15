@@ -163,11 +163,12 @@ export const getOneProduct = async ( productId ) => {
 	}
 }
 
-export const updateOneProduct = async ( productId, productName, cost, amountAvailable ) => {
+// NOTE: Only the owner of the product should be able to update product
+export const updateOneProduct = async ( userId, productId, productName, cost, amountAvailable ) => {
 	try {
 		// All fields are required.
-		if ( !productId || !productName || !cost || !amountAvailable ) {
-			throw new Error( 'One or more fields has not been set. Required fields: [productId, productName, cost, amountAvailable]' )
+		if ( !userId, !productId || !productName || !cost || !amountAvailable ) {
+			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, productName, cost, amountAvailable]' )
 		}
 
 		// Ensure the cost amount is valid
@@ -182,13 +183,17 @@ export const updateOneProduct = async ( productId, productName, cost, amountAvai
 			cost: Money( { amount: cost } ).toUnit(), // We need this for future finances
 			amountAvailable,
 		}, {
-			where: { productId },
+			where: { productId, sellerId: userId },
 			returning: true,
 		} )
 
+		if ( !product[0] ) {
+			throw new Error( 'The product was not updated. The productId may not exist or the product does not belong to you.' )
+		}
+
 		return {
 			error: false,
-			message: '',
+			message: 'The product has been updated successfully',
 			status: 200,
 			data: product[1],
 		}
@@ -202,11 +207,12 @@ export const updateOneProduct = async ( productId, productName, cost, amountAvai
 	}
 }
 
-export const updateProductName = async ( productId, productName ) => {
+// NOTE: Only the owner of the product should be able to update product
+export const updateProductName = async ( userId, productId, productName ) => {
 	try {
 		// All fields are required.
-		if ( !productId || !productName ) {
-			throw new Error( 'One or more fields has not been set. Required fields: [productId, productName]' )
+		if ( !userId || !productId || !productName ) {
+			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, productName]' )
 		}
 
 		// Update product
@@ -214,13 +220,17 @@ export const updateProductName = async ( productId, productName ) => {
 		const product = await ModelProduct.update( {
 			productName,
 		}, {
-			where: { productId },
+			where: { productId, sellerId: userId },
 			returning: true,
 		} )
 
+		if ( !product[0] ) {
+			throw new Error( 'The product was not updated. The productId may not exist or the product does not belong to you.' )
+		}
+
 		return {
 			error: false,
-			message: '',
+			message: 'Product name updated',
 			status: 200,
 			data: product[1],
 		}
@@ -234,11 +244,12 @@ export const updateProductName = async ( productId, productName ) => {
 	}
 }
 
-export const updateProductCost = async ( productId, cost ) => {
+// NOTE: Only the owner of the product should be able to update product
+export const updateProductCost = async ( userId, productId, cost ) => {
 	try {
 		// All fields are required.
-		if ( !productId || !cost ) {
-			throw new Error( 'One or more fields has not been set. Required fields: [productId, cost]' )
+		if ( !userId || !productId || !cost ) {
+			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, cost]' )
 		}
 
 		// Ensure the cost amount is valid
@@ -251,13 +262,17 @@ export const updateProductCost = async ( productId, cost ) => {
 		const product = await ModelProduct.update( {
 			cost: Money( { amount: cost } ).toUnit(), // We need this for future finances
 		}, {
-			where: { productId },
+			where: { productId, sellerId: userId, },
 			returning: true,
 		} )
 
+		if ( !product[0] ) {
+			throw new Error( 'The product was not updated. The productId may not exist or the product does not belong to you.' )
+		}
+
 		return {
 			error: false,
-			message: '',
+			message: 'Product cost updated',
 			status: 200,
 			data: product[1],
 		}
@@ -271,11 +286,12 @@ export const updateProductCost = async ( productId, cost ) => {
 	}
 }
 
-export const updateProductStock = async ( productId, amountAvailable ) => {
+// NOTE: Only the owner of the product should be able to update product
+export const updateProductStock = async ( userId, productId, amountAvailable ) => {
 	try {
 		// All fields are required.
-		if ( !productId || !amountAvailable ) {
-			throw new Error( 'One or more fields has not been set. Required fields: [productId, amountAvailable]' )
+		if ( !userId || !productId || !amountAvailable ) {
+			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, amountAvailable]' )
 		}
 
 		// Update product
@@ -287,9 +303,13 @@ export const updateProductStock = async ( productId, amountAvailable ) => {
 			returning: true,
 		} )
 
+		if ( !product[0] ) {
+			throw new Error( 'The product was not updated. The productId may not exist or the product does not belong to you.' )
+		}
+
 		return {
 			error: false,
-			message: '',
+			message: 'Product stock updated',
 			status: 200,
 			data: product[1],
 		}
@@ -304,35 +324,25 @@ export const updateProductStock = async ( productId, amountAvailable ) => {
 }
 
 // NOTE: Only the owner of the product should be able to transfer ownership
-export const transferProductOwnership = async ( productId, sellerId ) => {
+export const transferProductOwnership = async ( userId, productId, newSellerId ) => {
 	try {
 		// All fields are required.
-		if ( !productId || !sellerId ) {
-			throw new Error( 'One or more fields has not been set. Required fields: [productId, sellerId]' )
-		}
-
-		// Ensure that the seller exists
-		const ModelUser = UserModel()
-		const seller = await ModelUser.findOne( {
-			attributes: ['refId'],
-			where: { refId: sellerId, deletedAt: null },
-		} )
-		if ( !( seller instanceof ModelUser ) || !seller ) {
-			throw new Error( `Seller with ID '${sellerId}' not found. Cannot transfer ownership` )
+		if ( !userId || !productId || !newSellerId ) {
+			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, newSellerId]' )
 		}
 
 		// Update product
 		const ModelProduct = ProductModel()
 		const product = await ModelProduct.update( {
-			sellerId,
+			sellerId: newSellerId,
 		}, {
-			where: { productId },
+			where: { productId, sellerId: userId },
 			returning: true,
 		} )
 
 		return {
 			error: false,
-			message: '',
+			message: `The product now belongs to user with ID '${newSellerId}'`,
 			status: 200,
 			data: product[1],
 		}
