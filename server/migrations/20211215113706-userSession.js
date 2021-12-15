@@ -1,5 +1,5 @@
 'use strict'
-const { UserModel } = require( '../models/user.model' )
+const { UserSessionModel } = require( '../models/userSession.model' )
 
 module.exports = {
 	up: async ( queryInterface ) => {
@@ -9,8 +9,8 @@ module.exports = {
 		 * Example:
 		 * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
 		 */
-		const ModelUser = UserModel()
-		await queryInterface.createTable( ModelUser.tableName, ModelUser.rawAttributes )
+		const ModelUserSession = UserSessionModel()
+		await queryInterface.createTable( ModelUserSession.tableName, ModelUserSession.rawAttributes )
 	},
 
 	down: async ( queryInterface ) => {
@@ -20,7 +20,7 @@ module.exports = {
 		 * Example:
 		 * await queryInterface.dropTable('users');
 		 */
-		const ModelUser = UserModel()
-		await queryInterface.dropTable( ModelUser.tableName )
+		const ModelUserSession = UserSessionModel()
+		await queryInterface.dropTable( ModelUserSession.tableName )
 	}
 }
