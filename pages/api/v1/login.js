@@ -1,4 +1,4 @@
-import { loginUser } from '../../../../server/handles/user.handler'
+import { loginUser } from '../../../server/handles/user.handler'
 import { runCors, setDefaultResponse } from '../../../server/utils'
 
 export default async ( req, res ) => {
