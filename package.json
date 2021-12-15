@@ -8,7 +8,14 @@
 		"start": "next start",
 		"lint": "next lint",
 		"migrate": "./node_modules/.bin/sequelize db:migrate",
-		"migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo"
+		"migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo",
+		"test": "jest"
+	},
+	"jest": {
+		"testEnvironment": "node",
+		"coveragePathIgnorePatterns": [
+			"/node_modules/"
+		]
 	},
 	"repository": "https://github.com/assetcorp/match-vending.git",
 	"author": "Delali <michaelazumah@live.com>",
@@ -32,6 +39,8 @@
 		"babel-register": "^6.26.0",
 		"eslint": "^8.4.1",
 		"eslint-plugin-react": "^7.27.1",
-		"sequelize-cli": "^6.3.0"
+		"jest": "^27.4.5",
+		"sequelize-cli": "^6.3.0",
+		"supertest": "^6.1.6"
 	}
 }
