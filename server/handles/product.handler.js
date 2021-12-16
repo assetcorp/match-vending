@@ -109,7 +109,7 @@ export const patchUpProduct = async ( req, res ) => {
 			}
 
 			const product = await getOneProduct( productId )
-			if ( product.error ) throw new Error( product )
+			if ( product.error ) throw product
 
 			return res
 				.status( product.status )
