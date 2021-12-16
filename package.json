@@ -9,7 +9,7 @@
 		"start": "next start",
 		"lint": "next lint",
 		"migrate": "./node_modules/.bin/sequelize db:create",
-		"migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo",
+		"migrate:undo": "./node_modules/.bin/sequelize db:drop",
 		"app-migrate:reset": "cross-env NODE_ENV=test ./node_modules/.bin/sequelize db:drop && cross-env NODE_ENV=test  ./node_modules/.bin/sequelize db:create",
 		"test": "cross-env NODE_ENV=test jest --testTimeout=10000",
 		"pretest": "cross-env NODE_ENV=test yarn app-migrate:reset",
