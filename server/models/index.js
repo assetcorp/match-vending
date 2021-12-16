@@ -28,8 +28,6 @@ const databaseConfig =  {
 	}
 }
 
-console.log( databaseConfig )
-
 
 // Database connection via sequelize
 const sequelizeConnection = new Sequelize(
@@ -62,9 +60,7 @@ fs
 		return ( file.indexOf( '.' ) !== 0 ) && ( file !== basename ) && ( file.slice( -3 ) === '.js')
 	} )
 	.forEach( file => {
-		console.log(file)
 		const model = require( path.join( __dirname, file ) )
-		console.log(model.name)
 		db.models[model.name] = model
 	} )
 

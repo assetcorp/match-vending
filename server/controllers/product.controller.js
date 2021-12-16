@@ -19,7 +19,6 @@ const convertAmountIntoArrayParts = ( amount, validCents = [5, 10, 20, 50, 100] 
 	for ( let item of validCents ) {
 		const closest = Math.max.apply( null, newCents.filter( function ( v ) { return v <= amount } ) )
 		const closestIndex = validCents.indexOf( closest )
-		console.log( closest, closestIndex, amount, newCents, centArray )
 		centArray.push( validCents[closestIndex] )
 
 		if ( lodash.sum( centArray ) === amount ) {
@@ -28,7 +27,6 @@ const convertAmountIntoArrayParts = ( amount, validCents = [5, 10, 20, 50, 100] 
 
 		const centManipulate = [...newCents]
 		centManipulate.splice( closestIndex, 1 )
-		console.log( centManipulate )
 
 		newCents = [...centManipulate]
 	}
@@ -455,7 +453,6 @@ export const createProduct = async ( userId, productName, cost, amountAvailable 
 		if ( !userId || !productName || !cost || !amountAvailable ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [userId, productName, cost, amountAvailable]' )
 		}
-		console.log( cost )
 		// Ensure the cost amount is valid
 		if ( [5, 10, 20, 50, 100].indexOf( cost ) === -1 ) {
 			throw new Error( 'The cost amount has to be one of 5, 10, 20, 50, or 100 cent coins' )

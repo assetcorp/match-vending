@@ -15,7 +15,6 @@ export const newProduct = async ( req, res ) => {
 			const { productName, cost, amountAvailable } = req.body
 			const userId = req.jwt.userId
 			const userIsSeller = req.userDetails.role === 'seller'
-			console.log( req.userDetails )
 
 			if ( !userIsSeller ) {
 				throw {

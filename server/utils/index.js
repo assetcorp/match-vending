@@ -66,7 +66,6 @@ export const verifyJwt = token => {
 }
 
 export const validateJwt = async ( req, res ) => {
-	console.log( req.headers )
 	if ( req.headers['authorization'] ) {
 		try {
 			let authorization = req.headers['authorization'].split( ' ' )
@@ -135,7 +134,6 @@ export const runCors = async ( req, res ) => {
 			if ( origin.indexOf( 'localhost' ) !== -1 || appConfig.WHITELIST_DOMAINS.indexOf( origin ) !== -1 ) {
 				callback( null, true )
 			} else {
-				console.log( origin )
 				callback( new Error( 'Not allowed' ) )
 			}
 		}
@@ -157,9 +155,7 @@ export const syncDatabase = async () => {
 		}
 
 		for ( let item of Object.keys(models) ) {
-			console.log( 'Syncing model' )
 			await models[item].sync()
-			console.log( 'Syncing model finished' )
 		}
 	} catch ( error ) {
 		console.error( error.message || 'Sync database failed' )

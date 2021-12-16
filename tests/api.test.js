@@ -60,7 +60,6 @@ describe( 'Users', () => {
 		const user = await createUser()
 
 		userToken = user.body.data.token
-		// console.log( userData )
 		expect( user.status ).toEqual( 201 )
 		expect( user.body ).toHaveProperty( 'data' )
 		expect( user.body.data ).toHaveProperty( 'token' )
@@ -84,8 +83,6 @@ describe( 'Users', () => {
 	it( 'should create a new product', async () => {
 		const product = await createProduct( userToken )
 
-		// console.log( product.body )
-
 		if ( product.status === 201 ) {
 			productId = product.body.data.productId
 		}
@@ -105,7 +102,6 @@ describe( 'Users', () => {
 		const product = await buy( userToken, productId )
 
 		// userData = user.body
-		// console.log( product.body )
 		expect( product.status ).toEqual( 200 )
 		expect( product.body.data.change ).toEqual( [50, 20, 10] )
 	} )
