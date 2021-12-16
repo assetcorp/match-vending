@@ -9,7 +9,7 @@ export const getSessionByToken = async ( token ) => {
 		}
 
 		const ModelSessionUser = UserSessionModel()
-		ModelSessionUser.sync()
+		// ModelSessionUser.sync()
 		const session = await ModelSessionUser.findOne( {
 			where: { sessionToken: token },
 		} )
@@ -41,7 +41,7 @@ export const userLogout = async ( username, token ) => {
 		}
 
 		const ModelSessionUser = UserSessionModel()
-		ModelSessionUser.sync()
+		// ModelSessionUser.sync()
 
 		const sessionsDeleted = await ModelSessionUser.destroy( {
 			where: { sessionToken: token },
@@ -74,7 +74,7 @@ export const userLogoutAll = async ( username ) => {
 		}
 
 		const ModelSessionUser = UserSessionModel()
-		ModelSessionUser.sync()
+		// ModelSessionUser.sync()
 
 		const sessionsDeleted = await ModelSessionUser.destroy( {
 			where: { username },

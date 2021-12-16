@@ -16,7 +16,7 @@ export const userSignUp = async ( username, password ) => {
 		}
 
 		const ModelUser = UserModel()
-		ModelUser.sync()
+		// ModelUser.sync()
 
 		// Check if user already exists
 		const existingUser = await ModelUser.findAndCountAll( {
@@ -34,7 +34,7 @@ export const userSignUp = async ( username, password ) => {
 
 		// Save a new active session for the user
 		const ModelSessionUser = UserSessionModel()
-		ModelSessionUser.sync()
+		// ModelSessionUser.sync()
 
 		await ModelSessionUser.create( {
 			username,
@@ -67,7 +67,7 @@ export const userLogin = async ( username, password ) => {
 		}
 
 		const ModelUser = UserModel()
-		ModelUser.sync()
+		// ModelUser.sync()
 
 		// Find user by username
 		const user = await ModelUser.findOne( {
@@ -119,7 +119,7 @@ export const userLogin = async ( username, password ) => {
 export const getAllUsers = async ( limit = 10, offset = 0 ) => {
 	try {
 		const ModelUser = UserModel()
-		ModelUser.sync()
+		// ModelUser.sync()
 
 		// Find all users
 		const users = await ModelUser.findAll( {
@@ -152,7 +152,7 @@ export const getOneUser = async ( username ) => {
 			throw new Error( 'One or more fields has not been set. Required fields: [username]' )
 		}
 		const ModelUser = UserModel()
-		ModelUser.sync()
+		// ModelUser.sync()
 
 		// Find one user
 		const user = await ModelUser.findOne( {
@@ -192,7 +192,7 @@ export const patchUserDeposit = async ( username, amount ) => {
 		}
 
 		const ModelUser = UserModel()
-		ModelUser.sync()
+		// ModelUser.sync()
 
 		// Just using this wrapper method incase we want to accept money greater than 100 cents and perhaps different currencies
 		const newAmount = Number( amount )
@@ -233,7 +233,7 @@ export const patchUserDepositReset = async ( username ) => {
 		}
 
 		const ModelUser = UserModel()
-		ModelUser.sync()
+		// ModelUser.sync()
 		// Update user
 		await ModelUser.update( {
 			deposit: 0,
@@ -270,7 +270,7 @@ export const patchUserRole = async ( username, role ) => {
 
 		// Update user
 		const ModelUser = UserModel()
-		ModelUser.sync()
+		// ModelUser.sync()
 		await ModelUser.update( {
 			role,
 		}, {
@@ -300,7 +300,7 @@ export const removeUser = async ( username ) => {
 		}
 		// Update user
 		const ModelUser = UserModel()
-		ModelUser.sync()
+		// ModelUser.sync()
 		await ModelUser.destroy( {
 			where: { username }
 		} )
@@ -328,7 +328,7 @@ export const restoreUserFromDeleted = async ( username ) => {
 		}
 		// Update user
 		const ModelUser = UserModel()
-		ModelUser.sync()
+		// ModelUser.sync()
 		await ModelUser.restore( {
 			where: { username }
 		} )

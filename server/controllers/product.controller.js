@@ -44,7 +44,7 @@ export const buyProduct = async ( depositAmount, username, productId, totalUnits
 
 		// Get the product details
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 		const productDetails = await ModelProduct.findOne( {
 			where: { productId, deletedAt: null }
 		} )
@@ -110,7 +110,7 @@ export const buyProduct = async ( depositAmount, username, productId, totalUnits
 export const getAllProducts = async ( limit = 10, offset = 0 ) => {
 	try {
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 
 		// Find all products
 		const products = await ModelProduct.findAll( {
@@ -144,7 +144,7 @@ export const getOneProduct = async ( productId ) => {
 
 		// Find one product
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 		const product = await ModelProduct.findOne( {
 			where: { productId, deletedAt: null }
 		} )
@@ -183,7 +183,7 @@ export const updateOneProduct = async ( userId, productId, productName, cost, am
 
 		// Update product
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 		const productUpdate = await ModelProduct.update( {
 			productName,
 			cost,
@@ -226,7 +226,7 @@ export const updateProductName = async ( userId, productId, productName ) => {
 		}
 		// Update product
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 		await ModelProduct.update( {
 			productName,
 		}, {
@@ -268,7 +268,7 @@ export const updateProductCost = async ( userId, productId, cost ) => {
 
 		// Update product
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 		await ModelProduct.update( {
 			cost,
 		}, {
@@ -305,7 +305,7 @@ export const updateProductStock = async ( userId, productId, amountAvailable ) =
 
 		// Update product
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 		await ModelProduct.update( {
 			amountAvailable,
 		}, {
@@ -342,7 +342,7 @@ export const transferProductOwnership = async ( userId, productId, newSellerId )
 
 		// Update product
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 		await ModelProduct.update( {
 			sellerId: newSellerId,
 		}, {
@@ -379,7 +379,7 @@ export const removeProduct = async ( userId, productId ) => {
 
 		// Remove product
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 		const deleted = await ModelProduct.destroy( {
 			where: { productId, sellerId: userId },
 		} )
@@ -413,7 +413,7 @@ export const restoreProduct = async ( userId, productId ) => {
 
 		// Remove product
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 		const restored = await ModelProduct.restore( {
 			where: { productId, sellerId: userId },
 		} )
@@ -451,7 +451,7 @@ export const createProduct = async ( userId, productName, cost, amountAvailable 
 
 		// Ensure that the seller exists
 		const ModelUser = UserModel()
-		ModelUser.sync()
+		// ModelUser.sync()
 		const seller = await ModelUser.findOne( {
 			attributes: ['refId'],
 			where: { refId: userId, deletedAt: null },
@@ -462,7 +462,7 @@ export const createProduct = async ( userId, productName, cost, amountAvailable 
 
 		// Create product
 		const ModelProduct = ProductModel()
-		ModelProduct.sync()
+		// ModelProduct.sync()
 		const product = await ModelProduct.create( {
 			sellerId: userId,
 			productName,

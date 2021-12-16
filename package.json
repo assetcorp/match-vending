@@ -4,14 +4,16 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "next dev",
+		"dev:test": "cross-env NODE_ENV=test node ./server/models/index.js && cross-env NODE_ENV=test next dev",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"migrate": "./node_modules/.bin/sequelize db:migrate",
+		"migrate": "./node_modules/.bin/sequelize db:create",
 		"migrate:undo": "./node_modules/.bin/sequelize db:migrate:undo",
 		"app-migrate:reset": "cross-env NODE_ENV=test ./node_modules/.bin/sequelize db:drop && cross-env NODE_ENV=test  ./node_modules/.bin/sequelize db:create",
 		"test": "cross-env NODE_ENV=test jest --testTimeout=10000",
-		"pretest": "cross-env NODE_ENV=test yarn app-migrate:reset"
+		"pretest": "cross-env NODE_ENV=test yarn app-migrate:reset",
+		"posttest": "cross-env NODE_ENV=test ./node_modules/.bin/sequelize db:drop"
 	},
 	"jest": {
 		"testEnvironment": "node",
@@ -43,6 +45,7 @@
 		"eslint": "^8.4.1",
 		"eslint-plugin-react": "^7.27.1",
 		"jest": "^27.4.5",
+		"pm2": "^5.1.2",
 		"sequelize-cli": "^6.3.0",
 		"supertest": "^6.1.6"
 	}

@@ -5,6 +5,7 @@ import Cors from 'cors'
 import dotenv from 'dotenv'
 import { getSessionByToken } from '../controllers/userSession.controller'
 import { getOneUser } from '../controllers/user.controller'
+import { database } from '../database/db'
 
 dotenv.config()
 
@@ -59,7 +60,7 @@ export const verifyJwt = token => {
 }
 
 export const validateJwt = async ( req, res ) => {
-	console.log(req.headers)
+	console.log( req.headers )
 	if ( req.headers['authorization'] ) {
 		try {
 			let authorization = req.headers['authorization'].split( ' ' )
@@ -136,3 +137,4 @@ export const runCors = async ( req, res ) => {
 
 	await runMiddleware( req, res, cors )
 }
+

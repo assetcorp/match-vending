@@ -1,7 +1,35 @@
-const databaseConfig = require( '../config/db.config' )
 const Sequelize = require( 'sequelize' )
 const fs = require( 'fs' )
 const path = require( 'path' )
+const dotenv = require( 'dotenv' )
+const NODE_ENV_TEST = process.env.NODE_ENV === 'test'
+dotenv.config( {
+	path: path.resolve( __dirname, '../../', NODE_ENV_TEST ? '.env.test.local' : '.env' )
+} )
+
+const envProcess = process.env
+const databaseConfig =  {
+  HOST: envProcess.DB_HOST,
+  USER: envProcess.DB_USER,
+  PASSWORD: envProcess.DB_PASSWORD,
+  DB: envProcess.DB_NAME,
+  dialect: envProcess.DB_DIALECT,
+  pool: {
+    max: parseInt( envProcess.DB_POOL_MAX ),
+    min: parseInt( envProcess.DB_POOL_MIN ),
+    acquire: parseInt( envProcess.DB_POOL_ACQUIRE ),
+    idle: parseInt( envProcess.DB_POOL_IDLE ),
+  },
+	define: {
+		underscored: false,
+		charset: 'utf8mb4',
+		collate: 'utf8mb4_unicode_ci',
+		timestamps: true
+	}
+}
+
+console.log( databaseConfig )
+
 
 // Database connection via sequelize
 const sequelizeConnection = new Sequelize(
@@ -29,7 +57,7 @@ const db = {}
 fs
 	.readdirSync( __dirname )
 	.filter( file => {
-		return ( file.indexOf( '.' ) !== 0 ) && ( file !== basename ) && ( file.slice( -3 ) === '.js' )
+		return ( file.indexOf( '.' ) !== 0 ) && ( file !== basename ) && ( file.slice( -3 ) === '.js')
 	} )
 	.forEach( file => {
 		const model = require( path.join( __dirname, file ) )
