@@ -1,10 +1,11 @@
 import { UserModel } from '../models/user.model'
-import { signJwt } from '../utils'
+import { signJwt, syncDatabase } from '../utils'
 import { UserSessionModel } from '../models/userSession.model'
 import { v4 as uuidV4 } from 'uuid'
 
 export const userSignUp = async ( username, password ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !username || !password ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [username, password]' )
@@ -61,6 +62,7 @@ export const userSignUp = async ( username, password ) => {
 
 export const userLogin = async ( username, password ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !username || !password ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [username, password]' )
@@ -118,6 +120,7 @@ export const userLogin = async ( username, password ) => {
 
 export const getAllUsers = async ( limit = 10, offset = 0 ) => {
 	try {
+		await syncDatabase()
 		const ModelUser = UserModel()
 		// ModelUser.sync()
 
@@ -147,6 +150,7 @@ export const getAllUsers = async ( limit = 10, offset = 0 ) => {
 
 export const getOneUser = async ( username ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !username ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [username]' )
@@ -181,6 +185,7 @@ export const getOneUser = async ( username ) => {
 // Only a user with 'buyer' role can deposit funds
 export const patchUserDeposit = async ( username, amount ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !username || !amount ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [username, amount]' )
@@ -227,6 +232,7 @@ export const patchUserDeposit = async ( username, amount ) => {
 // Only a user with 'buyer' role can reset deposited funds
 export const patchUserDepositReset = async ( username ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !username ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [username]' )
@@ -258,6 +264,7 @@ export const patchUserDepositReset = async ( username ) => {
 
 export const patchUserRole = async ( username, role ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !username || !role ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [username, role]' )
@@ -294,6 +301,7 @@ export const patchUserRole = async ( username, role ) => {
 
 export const removeUser = async ( username ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !username ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [username]' )
@@ -322,6 +330,7 @@ export const removeUser = async ( username ) => {
 
 export const restoreUserFromDeleted = async ( username ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !username ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [username]' )

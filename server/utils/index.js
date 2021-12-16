@@ -5,7 +5,10 @@ import Cors from 'cors'
 import dotenv from 'dotenv'
 import { getSessionByToken } from '../controllers/userSession.controller'
 import { getOneUser } from '../controllers/user.controller'
-import { database } from '../database/db'
+import { UserModel } from '../models/user.model'
+import { UserSessionModel } from '../models/userSession.model'
+import { ProductModel } from '../models/product.model'
+
 
 dotenv.config()
 
@@ -138,3 +141,24 @@ export const runCors = async ( req, res ) => {
 	await runMiddleware( req, res, cors )
 }
 
+export const syncDatabase = async () => {
+	try {
+		const ModelUser = UserModel()
+		const ModelUserSession = UserSessionModel()
+		const ModelProduct = ProductModel()
+
+		const models = {
+			ModelUser,
+			ModelUserSession,
+			ModelProduct,
+		}
+
+		for ( let item of Object.keys(models) ) {
+			console.log( 'Syncing model' )
+			await models[item].sync()
+			console.log( 'Syncing model finished' )
+		}
+	} catch ( error ) {
+		console.error( error.message || 'Sync database failed' )
+	}
+}

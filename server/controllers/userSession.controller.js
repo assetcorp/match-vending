@@ -1,8 +1,10 @@
 import { UserSessionModel } from "../models/userSession.model"
+import { syncDatabase } from "../utils"
 
 
 export const getSessionByToken = async ( token ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !token ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [token]' )
@@ -35,6 +37,7 @@ export const getSessionByToken = async ( token ) => {
 
 export const userLogout = async ( username, token ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !username || !token ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [username, token]' )
@@ -68,6 +71,7 @@ export const userLogout = async ( username, token ) => {
 
 export const userLogoutAll = async ( username ) => {
 	try {
+		await syncDatabase()
 		// All fields are required
 		if ( !username ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [username]' )

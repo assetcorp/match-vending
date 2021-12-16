@@ -2,6 +2,7 @@ import { ProductModel } from '../models/product.model'
 import { database } from '../database/db'
 import { UserModel } from '../models/user.model'
 import * as lodash from 'lodash'
+import { syncDatabase } from '../utils'
 
 /**
  * Splits an amount into an array of smaller amounts.
@@ -37,6 +38,7 @@ const convertAmountIntoArrayParts = ( amount, validCents = [5, 10, 20, 50, 100] 
 
 export const buyProduct = async ( depositAmount, username, productId, totalUnits ) => {
 	try {
+		await syncDatabase()
 		// All fields are required. NOTE: totalUnits and depositAmount MUST not be zero
 		if ( !depositAmount || !username || !productId || !totalUnits ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [depositAmount, username, productId, totalUnits]' )
@@ -109,6 +111,7 @@ export const buyProduct = async ( depositAmount, username, productId, totalUnits
 
 export const getAllProducts = async ( limit = 10, offset = 0 ) => {
 	try {
+		await syncDatabase()
 		const ModelProduct = ProductModel()
 		// ModelProduct.sync()
 
@@ -137,6 +140,7 @@ export const getAllProducts = async ( limit = 10, offset = 0 ) => {
 
 export const getOneProduct = async ( productId ) => {
 	try {
+		await syncDatabase()
 		// All fields are required.
 		if ( !productId ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [productId]' )
@@ -171,6 +175,7 @@ export const getOneProduct = async ( productId ) => {
 // NOTE: Only the owner of the product should be able to update product
 export const updateOneProduct = async ( userId, productId, productName, cost, amountAvailable ) => {
 	try {
+		await syncDatabase()
 		// All fields are required.
 		if ( !userId, !productId || !productName || !cost || !amountAvailable ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, productName, cost, amountAvailable]' )
@@ -220,6 +225,7 @@ export const updateOneProduct = async ( userId, productId, productName, cost, am
 // NOTE: Only the owner of the product should be able to update product
 export const updateProductName = async ( userId, productId, productName ) => {
 	try {
+		await syncDatabase()
 		// All fields are required.
 		if ( !userId || !productId || !productName ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, productName]' )
@@ -256,6 +262,7 @@ export const updateProductName = async ( userId, productId, productName ) => {
 // NOTE: Only the owner of the product should be able to update product
 export const updateProductCost = async ( userId, productId, cost ) => {
 	try {
+		await syncDatabase()
 		// All fields are required.
 		if ( !userId || !productId || !cost ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, cost]' )
@@ -298,6 +305,7 @@ export const updateProductCost = async ( userId, productId, cost ) => {
 // NOTE: Only the owner of the product should be able to update product
 export const updateProductStock = async ( userId, productId, amountAvailable ) => {
 	try {
+		await syncDatabase()
 		// All fields are required.
 		if ( !userId || !productId || !amountAvailable ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, amountAvailable]' )
@@ -335,6 +343,7 @@ export const updateProductStock = async ( userId, productId, amountAvailable ) =
 // NOTE: Only the owner of the product should be able to transfer ownership
 export const transferProductOwnership = async ( userId, productId, newSellerId ) => {
 	try {
+		await syncDatabase()
 		// All fields are required.
 		if ( !userId || !productId || !newSellerId ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId, newSellerId]' )
@@ -372,6 +381,7 @@ export const transferProductOwnership = async ( userId, productId, newSellerId )
 // NOTE: Only the owner of the product should be able to remove product
 export const removeProduct = async ( userId, productId ) => {
 	try {
+		await syncDatabase()
 		// All fields are required.
 		if ( !userId || !productId ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId]' )
@@ -406,6 +416,7 @@ export const removeProduct = async ( userId, productId ) => {
 // NOTE: Only the owner of the product should be able to restore product
 export const restoreProduct = async ( userId, productId ) => {
 	try {
+		await syncDatabase()
 		// All fields are required.
 		if ( !userId || !productId ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [userId, productId]' )
@@ -439,6 +450,7 @@ export const restoreProduct = async ( userId, productId ) => {
 
 export const createProduct = async ( userId, productName, cost, amountAvailable ) => {
 	try {
+		await syncDatabase()
 		// All fields are required.
 		if ( !userId || !productName || !cost || !amountAvailable ) {
 			throw new Error( 'One or more fields has not been set. Required fields: [userId, productName, cost, amountAvailable]' )
