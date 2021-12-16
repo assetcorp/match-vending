@@ -21,6 +21,8 @@ DB_POOL_MIN=0
 DB_POOL_ACQUIRE=30000
 DB_POOL_IDLE=10000
 
+Also note that you should have a `.env.test.local` for testing purposes.
+
 # JWT Secrets
 JWT_SECRET=some_secret
 
@@ -33,10 +35,14 @@ WHITELIST_DOMAINS='[]' # This is used to restrict CORS to specific domains
 
 Use `yarn build` to build the application. The output of the build would be populated inside the `.next` directory. Then `yarn start` would start the application in production mode.
 
+# Testing
+
+Use `yarn test` to test the application.
+
 # Additional Information
 
 Please note the following:
 
 - This application uses NextJS to handle API routes. [https://nextjs.org](NextJS).
-- The API endpoint is `HOST_NAME/api/`
+- The API endpoint is `HOST_NAME/api/v1/`
 - The application uses sequelize as an ORM to handle database management. [https://sequelize.org/](Sequelize)
