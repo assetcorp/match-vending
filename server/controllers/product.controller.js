@@ -488,7 +488,7 @@ export const createProduct = async ( userId, productName, cost, amountAvailable 
 			error: false,
 			message: 'Product created successfully',
 			status: 201,
-			data: product[1],
+			data: product,
 		}
 
 	} catch ( error ) {
