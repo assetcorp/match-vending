@@ -21,8 +21,6 @@ DB_POOL_MIN=0
 DB_POOL_ACQUIRE=30000
 DB_POOL_IDLE=10000
 
-Also note that you should have a `.env.test.local` for testing purposes.
-
 # JWT Secrets
 JWT_SECRET=some_secret
 
@@ -30,6 +28,8 @@ JWT_SECRET=some_secret
 WHITELIST_DOMAINS='[]' # This is used to restrict CORS to specific domains
 
 ```
+
+Also note that you should have a `.env.test.local` for testing purposes.
 
 # Building & deploying
 
