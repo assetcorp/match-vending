@@ -154,10 +154,10 @@ export const syncDatabase = async () => {
 			ModelProduct,
 		}
 
-		for ( let item of Object.keys(models) ) {
+		for ( let item of Object.keys( models ) ) {
 			await models[item].sync()
 		}
 	} catch ( error ) {
-		console.error( error.message || 'Sync database failed' )
+		// Handle error logging
 	}
 }

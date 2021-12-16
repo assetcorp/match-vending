@@ -159,7 +159,6 @@ export const restoreProduct = async ( req, res ) => {
 				.send( buildResponse( product.message ) )
 		}
 	} catch ( error ) {
-		console.error( error )
 		return res
 			.status( error.status || 500 )
 			.send( buildErrorResponse( error.message || genericErrorMessage ) )
