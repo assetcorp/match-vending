@@ -4,7 +4,7 @@
 	"main": "index.js",
 	"scripts": {
 		"dev": "next dev",
-		"dev:test": "cross-env NODE_ENV=test node ./server/models/index.js && cross-env NODE_ENV=test next dev",
+		"dev:test": "cross-env NODE_ENV=test next dev",
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",

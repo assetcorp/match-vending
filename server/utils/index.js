@@ -8,9 +8,12 @@ import { getOneUser } from '../controllers/user.controller'
 import { UserModel } from '../models/user.model'
 import { UserSessionModel } from '../models/userSession.model'
 import { ProductModel } from '../models/product.model'
+import path from 'path'
 
-
-dotenv.config()
+const NODE_ENV_TEST = process.env.NODE_ENV === 'test'
+dotenv.config( {
+	path: path.resolve( __dirname, '../../', NODE_ENV_TEST ? '.env.test.local' : '.env' )
+} )
 
 export const buildResponse = ( message = 'Not found', data = null ) => {
 	return {
